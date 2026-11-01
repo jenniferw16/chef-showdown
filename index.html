@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chef Showdown</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --site-primary: #a82e32;
+  --site-on-primary: #ffffff;
+  --site-secondary: #25272b;
+  --site-on-secondary: #ffffff;
+  --site-background: #17191d;
+  --site-on-background: #f7f2e9;
+  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-heading: Georgia, "Times New Roman", serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  --surface: light-dark(#ffffff, #22252a);
+  --surface-2: light-dark(#f3f0eb, #2d3036);
+  --ink: light-dark(#242326, #f7f2e9);
+  --muted: light-dark(#6d6b6a, #b9b5ae);
+  --line: light-dark(#ded8cf, #41434a);
+  --gold: #e7b957;
+  --green: #69bd8b;
+  --red: #d75b5b;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--site-font-body); background: var(--site-background); color: var(--site-on-background); }
+button, input { font: inherit; }
+button { cursor: pointer; }
+#app { min-height: 100vh; width: 100%; background: var(--site-background); color: var(--site-on-background); border-radius: 0; overflow: hidden; }
+.topbar { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:18px clamp(16px,4vw,48px); border-bottom:1px solid rgba(255,255,255,.12); background:var(--site-secondary); }
+.brand { display:flex; align-items:center; gap:12px; }
+.brand-mark { width:42px; height:42px; display:grid; place-items:center; border-radius:13px; background:var(--site-primary); color:white; font-size:23px; box-shadow:0 5px 18px #0005; }
+.brand-name { font-family:var(--site-font-heading); font-weight:800; letter-spacing:.07em; font-size:18px; }
+.brand-sub { font-size:10px; letter-spacing:.19em; color:#d5c8b5; margin-top:2px; }
+.top-actions { display:flex; align-items:center; gap:10px; }
+.pill { border:1px solid #ffffff35; border-radius:999px; padding:7px 11px; color:#f4e9d5; font-size:12px; }
+.sound-btn { border:1px solid #ffffff40; color:white; background:transparent; border-radius:999px; padding:8px 12px; }
+main { max-width:1120px; margin:0 auto; padding:36px clamp(16px,4vw,42px) 56px; }
+.hero { display:grid; grid-template-columns:1.15fr .85fr; gap:28px; align-items:center; margin-bottom:28px; }
+.eyebrow { color:var(--gold); font-size:11px; letter-spacing:.22em; font-weight:800; text-transform:uppercase; }
+h1,h2,h3 { font-family:var(--site-font-heading); }
+h1 { font-size:clamp(38px,6vw,68px); line-height:.98; margin:12px 0 16px; letter-spacing:-.035em; }
+h1 span { color:var(--gold); }
+.lead { color:#d2ccc3; font-size:16px; line-height:1.65; max-width:570px; }
+.hero-art { min-height:235px; border-radius:22px; padding:25px; background:radial-gradient(circle at 70% 20%,#7d3436 0,transparent 42%),linear-gradient(135deg,#373033,#1d2025 70%); border:1px solid #ffffff1c; position:relative; overflow:hidden; display:flex; align-items:flex-end; }
+.hero-art:before { content:""; position:absolute; width:210px;height:210px;border-radius:50%;border:1px solid #e7b95755;right:20px;top:-50px;box-shadow:0 0 0 22px #e7b9570d,0 0 0 48px #e7b9570a; opacity:var(--site-decoration-opacity); }
+.hero-art .emoji { position:absolute; right:34px; top:34px; font-size:100px; filter:drop-shadow(0 12px 12px #0008); }
+.hero-art strong { font-family:var(--site-font-heading); font-size:26px; max-width:230px; position:relative; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.panel { background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:calc(20px * var(--site-radius-scale)); padding:calc(22px * var(--site-spacing-scale)); box-shadow:0 12px 32px #0002; }
+.panel h2 { font-size:25px; margin:0 0 8px; }
+.panel p { color:var(--muted); line-height:1.55; margin:0 0 18px; font-size:14px; }
+.mode-card { display:flex; gap:14px; align-items:flex-start; padding:16px; background:var(--surface-2); border:1px solid var(--line); border-radius:14px; margin-top:12px; }
+.mode-icon { width:44px;height:44px; flex:none;display:grid;place-items:center;border-radius:13px;background:#a82e3218;font-size:23px; }
+.mode-card h3 { margin:0 0 5px; font-size:18px; }
+.mode-card p { margin:0; font-size:13px; }
+.primary,.secondary,.ghost { border:0; border-radius:12px; padding:12px 16px; font-weight:800; transition:transform .15s,filter .15s; }
+.primary { background:var(--site-primary); color:white; box-shadow:0 5px 15px #a82e3235; }
+.secondary { background:var(--site-secondary); color:white; }
+.ghost { background:transparent; border:1px solid var(--line); color:var(--ink); }
+.primary:hover,.secondary:hover,.ghost:hover { transform:translateY(-1px); filter:brightness(1.08); }
+.full { width:100%; margin-top:16px; }
+.select-row { display:flex; gap:10px; align-items:center; margin:16px 0 4px; flex-wrap:wrap; }
+select,input[type=text] { border:1px solid var(--line); border-radius:10px; padding:11px 12px; background:var(--surface-2); color:var(--ink); }
+label { font-size:13px; font-weight:700; }
+.hidden { display:none !important; }
+.game-head { display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px; }
+.game-head h2 { margin:0; font-size:28px; }
+.stats { display:flex;gap:8px;flex-wrap:wrap; }
+.stat { background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-size:12px; color:var(--muted); }
+.stat b { color:var(--ink); }
+.progress { height:7px;background:var(--surface-2);border-radius:99px;overflow:hidden;margin:14px 0 20px; }
+.progress > div { height:100%;width:0;background:var(--gold);transition:width .25s; }
+.play-layout { display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:18px; }
+.question-card { background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:clamp(18px,3vw,30px); }
+.question-tag { color:var(--site-primary);font-size:11px;font-weight:900;letter-spacing:.15em;text-transform:uppercase; }
+.question-card h3 { font-size:clamp(23px,3.3vw,34px);line-height:1.2;margin:12px 0 20px; }
+.question-image { font-size:58px;background:var(--surface-2);border-radius:14px;padding:15px;text-align:center;margin-bottom:15px; }
+.answers { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+.answer { text-align:left;background:var(--surface-2);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:14px;min-height:58px;font-weight:700; }
+.answer:hover:not(:disabled) { border-color:var(--site-primary); }
+.answer:disabled { cursor:default;opacity:.9; }
+.answer.correct { border-color:var(--green);background:#2d8a4b20; }
+.answer.wrong { border-color:var(--red);background:#c64c4c18; }
+.feedback { margin-top:14px;padding:13px;border-radius:12px;background:var(--surface-2);font-size:14px;line-height:1.5; }
+.side { display:flex;flex-direction:column;gap:14px; }
+.timer-box { text-align:center;background:var(--site-secondary);color:white;border-radius:18px;padding:20px; }
+.timer-num { font-family:var(--site-font-heading);font-size:48px;color:var(--gold);font-weight:800; }
+.timer-caption { font-size:11px;letter-spacing:.16em;color:#cfc7bb; }
+.scoreboard { background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:17px; }
+.scoreboard h3 { margin:0 0 12px;font-size:20px; }
+.player-row { display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px; }
+.player-row:last-child { border:0; }
+.avatar { width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:var(--surface-2);font-size:18px; }
+.player-name { flex:1;font-weight:700; }
+.player-score { font-weight:900;font-variant-numeric:tabular-nums; }
+.player-row.me .player-name:after { content:" YOU";color:var(--site-primary);font-size:9px; }
+.modal-backdrop { position:fixed;inset:0;background:#0009;display:grid;place-items:center;padding:18px;z-index:5; }
+.modal { width:min(520px,100%);background:var(--surface);color:var(--ink);border-radius:20px;padding:26px;border:1px solid var(--line);box-shadow:0 24px 80px #0008; }
+.modal h2 { margin:0 0 8px;font-size:30px; }
+.modal p { color:var(--muted);line-height:1.55; }
+.avatars { display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 18px; }
+.avatar-choice { font-size:24px;border:2px solid var(--line);background:var(--surface-2);border-radius:12px;padding:8px; }
+.avatar-choice.selected { border-color:var(--gold);background:#e7b95722; }
+.winner { text-align:center;padding:32px 18px; }
+.trophy { font-size:76px; }
+.winner h2 { font-size:clamp(34px,6vw,52px);margin:10px 0; }
+.winner-name { color:var(--gold); }
+.footer-note { text-align:center;color:#aaa39a;font-size:11px;margin-top:25px;line-height:1.5; }
+.toast { position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#272a30;color:white;border:1px solid #ffffff30;padding:11px 16px;border-radius:12px;z-index:10;box-shadow:0 8px 30px #0005;font-size:13px; }
+@media(max-width:760px){.hero{grid-template-columns:1fr}.hero-art{min-height:170px}.grid{grid-template-columns:1fr}.play-layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr}.answers{grid-template-columns:1fr}.topbar{padding:14px 16px}.pill{display:none}}
+@media(max-width:460px){.side{grid-template-columns:1fr}.brand-name{font-size:15px}.hero-art .emoji{font-size:75px}}
+</style>
+
+<style>
+#onlinePanel{position:fixed;inset:0;background:#000b;z-index:20;display:none;place-items:center;padding:16px}
+#onlinePanel.open{display:grid}.online-card{width:min(560px,100%);max-height:92vh;overflow:auto;background:#24272d;color:#f7f2e9;border:1px solid #ffffff30;border-radius:20px;padding:22px;box-shadow:0 25px 90px #0009}
+.online-card h2{margin:0 0 8px}.online-card p{color:#c9c2b8;line-height:1.5}.online-card input{width:100%;margin:7px 0 14px;background:#363a42;color:#fff;border:1px solid #666;padding:12px;border-radius:10px}.online-actions{display:flex;gap:9px;flex-wrap:wrap}.online-actions button{flex:1;min-width:120px}.online-player{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #ffffff20}.online-question{font-size:23px;line-height:1.3;margin:16px 0}.online-answer{width:100%;text-align:left;background:#363a42;color:#fff;border:1px solid #ffffff30;border-radius:11px;padding:13px;margin:5px 0;font-weight:700}.online-answer:disabled{opacity:.65}.online-small{font-size:12px;color:#c9c2b8}.online-code{font-size:30px;letter-spacing:.16em;color:#e7b957;font-weight:900}.online-status{padding:10px;border-radius:10px;background:#ffffff12;margin:10px 0}
+</style>
+
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">♨</div><div><div class="brand-name">CHEF SHOWDOWN</div><div class="brand-sub">THE ULTIMATE CULINARY GAME SHOW</div></div></div>
+    <div class="top-actions"><span class="pill">✦ FAMILY & FRIENDS EDITION</span><button class="sound-btn" id="soundToggle" aria-label="Toggle sound">♪ Sound: Off</button></div>
+  </header>
+  <main>
+    <section id="homeScreen">
+      <div class="hero">
+        <div><div class="eyebrow">Ready, set, cook… your brain!</div><h1>Think fast.<br><span>Play like a chef.</span></h1><p class="lead">A fast-paced culinary game show where food lovers face mystery ingredients, kitchen know-how, and chef-level challenges. Compete with friends—or practice solo with simulated players.</p></div>
+        <div class="hero-art"><div class="emoji">👨‍🍳</div><strong>Who will take home the Golden Chef Trophy?</strong></div>
+      </div>
+      <div class="grid">
+        <section class="panel">
+          <div class="eyebrow">Choose your experience</div><h2>Step into the kitchen</h2><p>Start a real room when friends are ready, or use Test Mode to run a full match on your own.</p>
+          <div class="mode-card"><div class="mode-icon">🧑‍🍳</div><div><h3>Play Game</h3><p>Create a room and invite other players with a room code. Live online multiplayer requires the hosted game service.</p><button class="ghost full" id="realPlayBtn">Set up a player room</button></div></div>
+          <div class="mode-card"><div class="mode-icon">🧪</div><div><h3>Test Mode</h3><p>Add computer-controlled chefs and test the rounds, answers, scoring, and champion screen by yourself.</p><button class="primary full" id="testModeBtn">Launch Test Mode</button></div></div>
+        </section>
+        <section class="panel">
+          <div class="eyebrow">The competition</div><h2>Four rounds. One champion.</h2><p>Twenty questions take players from beginner-friendly food knowledge to a final chef's challenge.</p>
+          <div class="mode-card"><div class="mode-icon">🧺</div><div><h3>01 · Mystery Basket</h3><p>Identify ingredients, herbs, spices, and kitchen tools.</p></div></div>
+          <div class="mode-card"><div class="mode-icon">🌡️</div><div><h3>02 · Food Safety Faceoff</h3><p>Storage, sanitation, safe temperatures, and kitchen safety.</p></div></div>
+          <div class="mode-card"><div class="mode-icon">🍳</div><div><h3>03 · Kitchen Knowledge</h3><p>Cooking methods, baking, equipment, and techniques.</p></div></div>
+          <div class="mode-card"><div class="mode-icon">🏆</div><div><h3>04 · Chef's Challenge</h3><p>Put your culinary judgment to the test with real-life scenarios.</p></div></div>
+          <div class="select-row"><label for="testPlayers">Test players</label><select id="testPlayers"><option value="1">1 simulated chef + you</option><option value="3" selected>3 simulated chefs + you</option><option value="5">5 simulated chefs + you</option><option value="7">7 simulated chefs + you</option></select></div>
+        </section>
+      </div>
+      <div class="footer-note">Prototype note: Test Mode uses simulated opponents in this browser. Public room codes and cross-device live play require a deployed multiplayer backend.</div>
+    </section>
+
+    <section id="gameScreen" class="hidden">
+      <div class="game-head"><div><div class="eyebrow" id="modeLabel">TEST MODE · PRIVATE PRACTICE</div><h2 id="roundTitle">Mystery Basket</h2></div><div class="stats"><div class="stat">ROOM <b id="roomCode">TEST-42</b></div><div class="stat">QUESTION <b id="questionCount">1 / 20</b></div></div></div>
+      <div class="progress"><div id="progressBar"></div></div>
+      <div class="play-layout">
+        <section class="question-card"><div class="question-tag" id="categoryTag">ROUND 1 · MYSTERY BASKET</div><div class="question-image" id="questionImage">🌿</div><h3 id="questionText">Loading question…</h3><div class="answers" id="answers"></div><div class="feedback hidden" id="feedback"></div><div style="display:flex;justify-content:space-between;gap:10px;margin-top:18px;align-items:center"><button class="ghost" id="leaveBtn">Exit game</button><button class="primary hidden" id="nextBtn">Next question →</button></div></section>
+        <aside class="side"><div class="timer-box"><div class="timer-caption">TIME REMAINING</div><div class="timer-num" id="timerNum">20</div><div class="timer-caption">SECONDS</div></div><div class="scoreboard"><h3>🏅 Live leaderboard</h3><div id="leaderboard"></div></div></aside>
+      </div>
+      <div class="footer-note">Test Mode · simulated players answer automatically. Scores shown here are for prototype testing.</div>
+    </section>
+
+    <section id="winnerScreen" class="hidden">
+      <div class="panel winner"><div class="eyebrow">THE FINAL RESULTS ARE IN</div><div class="trophy">🏆</div><h2>Chef Showdown <span class="winner-name">Champion!</span></h2><p id="winnerText">The kitchen has a new champion.</p><div id="finalScores" style="max-width:430px;margin:20px auto;text-align:left"></div><button class="primary" id="rematchBtn">Play another game</button> <button class="ghost" id="homeBtn">Back to home</button></div>
+    </section>
+  </main>
+</div>
+<div id="modalRoot"></div><div id="toastRoot"></div><div id="onlinePanel" aria-live="polite"><div class="online-card" id="onlineCard"></div></div>
+<script>
+const rounds = [
+ {name:"Mystery Basket",tag:"ROUND 1 · MYSTERY BASKET",questions:[
+  {emoji:"🌿",q:"Which herb is traditionally used to make pesto alla Genovese?",a:["Cilantro","Basil","Dill","Sage"],correct:1,why:"Fresh basil is the signature herb in classic Genovese pesto, blended with ingredients such as garlic, pine nuts, cheese, and olive oil."},
+  {emoji:"🧅",q:"Which of these is an allium commonly used as an aromatic base in cooking?",a:["Celery","Onion","Carrot","Bell pepper"],correct:1,why:"Onions belong to the allium family, along with garlic, leeks, shallots, and chives."},
+  {emoji:"🍋",q:"What flavor does a lemon primarily contribute to a dish?",a:["Sweetness","Bitterness","Acidity","Umami"],correct:2,why:"Lemon juice contributes acidity, which can brighten flavors and balance rich or fatty foods."},
+  {emoji:"🌶️",q:"Which spice is made from dried, ground berries of the Piper nigrum plant?",a:["Paprika","Black pepper","Cumin","Coriander"],correct:1,why:"Black pepper comes from the dried berries, often called peppercorns, of Piper nigrum."},
+  {emoji:"🥑",q:"Which fruit is known for containing mostly monounsaturated fat?",a:["Apple","Avocado","Pineapple","Grape"],correct:1,why:"Avocados are fruits rich in monounsaturated fats and are often used in both savory and sweet dishes."}
+ ]},
+ {name:"Food Safety Faceoff",tag:"ROUND 2 · FOOD SAFETY FACEOFF",questions:[
+  {emoji:"🌡️",q:"What is the minimum internal temperature for poultry, including chicken breast?",a:["145°F","155°F","165°F","175°F"],correct:2,why:"Food safety guidance calls for poultry to reach 165°F (74°C), measured with a food thermometer."},
+  {emoji:"🧼",q:"What should you do first after handling raw chicken before preparing a salad?",a:["Wipe hands on a towel","Wash hands with soap and water","Put on an apron","Rinse the chicken"],correct:1,why:"Wash hands with soap and water after handling raw poultry to reduce the risk of cross-contamination."},
+  {emoji:"🧊",q:"Which refrigerator temperature is the safest target for cold food storage?",a:["50°F or below","45°F or below","40°F or below","32°F or below"],correct:2,why:"Keep a refrigerator at 40°F (4°C) or below to slow the growth of harmful bacteria."},
+  {emoji:"🥘",q:"A large pot of soup needs to cool safely. Which approach is best?",a:["Leave it on the counter overnight","Divide it into shallow containers","Put the entire hot stockpot in a crowded refrigerator","Cover it tightly and leave it at room temperature"],correct:1,why:"Shallow containers help food cool more quickly. Follow the two-stage cooling standard and monitor temperatures."},
+  {emoji:"🧽",q:"What is the difference between cleaning and sanitizing a food-contact surface?",a:["They mean exactly the same thing","Cleaning removes soil; sanitizing reduces microorganisms","Sanitizing removes visible grease only","Cleaning kills every microorganism"],correct:1,why:"Cleaning removes food, dirt, and grease. Sanitizing then reduces microorganisms to safe levels."}
+ ]},
+ {name:"Kitchen Knowledge",tag:"ROUND 3 · KITCHEN KNOWLEDGE",questions:[
+  {emoji:"🔥",q:"Which cooking method uses hot, dry air surrounding the food?",a:["Poaching","Steaming","Roasting","Simmering"],correct:2,why:"Roasting cooks food with dry heat, typically in an oven."},
+  {emoji:"🥚",q:"What does it mean to temper eggs in a custard recipe?",a:["Freeze them before mixing","Gradually add hot liquid while whisking","Whip them until stiff","Cook them directly over high heat"],correct:1,why:"Tempering gradually raises the egg temperature so the eggs are less likely to scramble when added to a hot mixture."},
+  {emoji:"🍞",q:"What gas produced by yeast helps bread dough rise?",a:["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"],correct:2,why:"Yeast ferments sugars and releases carbon dioxide, which becomes trapped in the dough and helps it rise."},
+  {emoji:"🥣",q:"Which classic mother sauce is made from milk thickened with a white roux?",a:["Velouté","Béchamel","Espagnole","Hollandaise"],correct:1,why:"Béchamel is a milk-based sauce thickened with a white roux of flour and fat."},
+  {emoji:"🔪",q:"What is a julienne cut?",a:["Small cubes","Thin matchstick-shaped strips","Large wedges","Finely chopped herbs"],correct:1,why:"Julienne is a knife cut that produces thin, uniform matchstick-shaped strips."}
+ ]},
+ {name:"Chef's Challenge",tag:"ROUND 4 · CHEF'S CHALLENGE",questions:[
+  {emoji:"🍲",q:"A soup tastes too salty. Which adjustment is most likely to help balance it without simply adding more salt?",a:["Add an acidic ingredient gradually","Add more soy sauce","Reduce the soup further","Add salted butter"],correct:0,why:"A little acidity, such as lemon juice or vinegar, can balance perceived saltiness. Adjust gradually and taste."},
+  {emoji:"🥛",q:"A guest says they cannot consume dairy. Which ingredient is the best substitute for cow's milk in a smoothie?",a:["Plain almond beverage","Buttermilk","Whey powder","Sweetened condensed milk"],correct:0,why:"An unsweetened plant-based beverage can replace dairy milk in many smoothies. Always check labels and allergy needs."},
+  {emoji:"🍗",q:"You are planning a meal for a guest with a severe peanut allergy. What is the safest first step?",a:["Remove visible peanuts only","Ask the guest and carefully verify ingredients and cross-contact controls","Use a different brand of peanut oil without checking","Assume the garnish is the only concern"],correct:1,why:"Confirm the allergy and check every ingredient, preparation surface, utensil, and potential cross-contact risk. Never guess."},
+  {emoji:"🍝",q:"A pan sauce is too thin. Which technique can help thicken it while concentrating flavor?",a:["Dilute with stock","Simmer to reduce it","Add ice","Rinse the pan"],correct:1,why:"Reducing a sauce by simmering evaporates water and concentrates its flavor and body."},
+  {emoji:"🥗",q:"You are serving a composed salad for a group. Which action best supports consistent quality?",a:["Dress all salads hours ahead","Use varied portion sizes","Prepare components consistently and dress close to service","Leave cut produce uncovered"],correct:2,why:"Consistent preparation and portioning improve quality, while dressing close to service helps preserve texture."}
+ ]}
+];
+const avatarSet=["👩‍🍳","👨‍🍳","🧑‍🍳","👩🏽‍🍳","👨🏾‍🍳","👩🏻‍🍳","👨🏻‍🍳","🧑🏽‍🍳"];
+let players=[],qIndex=0,seconds=20,timer=null,answered=false,mode="test",soundOn=false,audioCtx=null,selectedAvatar=0;
+const $=id=>document.getElementById(id);
+function showToast(msg){$('toastRoot').innerHTML=`<div class="toast">${msg}</div>`;setTimeout(()=>$('toastRoot').innerHTML="",2300)}
+function showScreen(which){['homeScreen','gameScreen','winnerScreen'].forEach(id=>$(id).classList.toggle('hidden',id!==which))}
+function playTone(freq=660,duration=.09){if(!soundOn)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=freq;o.type='sine';g.gain.setValueAtTime(.045,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch(e){}}
+$('soundToggle').onclick=()=>{soundOn=!soundOn;$('soundToggle').textContent=soundOn?'♪ Sound: On':'♪ Sound: Off';if(soundOn)playTone(720)};
+function showAvatarModal(){selectedAvatar=0;const modal=`<div class="modal-backdrop"><div class="modal"><div class="eyebrow">PLAYER SETUP</div><h2>Choose your chef</h2><p>Pick an avatar and enter your player name before the competition begins.</p><label for="playerName">Your chef name</label><input id="playerName" type="text" maxlength="18" value="Chef You" style="width:100%;margin-top:7px"><div class="avatars">${avatarSet.map((a,i)=>`<button class="avatar-choice ${i===0?'selected':''}" data-avatar="${i}">${a}</button>`).join('')}</div><button class="primary full" id="confirmSetup">Enter the kitchen</button><button class="ghost full" id="cancelSetup">Cancel</button></div></div>`;$('modalRoot').innerHTML=modal;$('modalRoot').querySelectorAll('[data-avatar]').forEach(b=>b.onclick=()=>{selectedAvatar=+b.dataset.avatar;$('modalRoot').querySelectorAll('[data-avatar]').forEach(x=>x.classList.toggle('selected',x===b))});$('cancelSetup').onclick=()=>$('modalRoot').innerHTML='';$('confirmSetup').onclick=()=>{const name=$('playerName').value.trim()||'Chef You';$('modalRoot').innerHTML='';startTest(name,selectedAvatar,parseInt($('testPlayers').value,10))}}
+$('testModeBtn').onclick=showAvatarModal;
+$('realPlayBtn').onclick=()=>showToast('Online rooms are not connected in this prototype yet. Use Test Mode to play now.');
+function startTest(name,avatar,botCount){mode='test';qIndex=0;players=[{id:'human',name,avatar:avatarSet[avatar],score:0,isHuman:true,answered:false}];const names=['Chef Pepper','Chef Sizzle','Chef Basil','Chef Mocha','Chef Ginger','Chef Olive','Chef Cocoa'];for(let i=0;i<botCount;i++)players.push({id:'bot'+i,name:names[i],avatar:avatarSet[(i+2)%avatarSet.length],score:0,isHuman:false,answered:false});$('modeLabel').textContent='TEST MODE · SIMULATED OPPONENTS';$('roomCode').textContent='TEST-'+Math.floor(10+Math.random()*89)+'-'+Math.floor(10+Math.random()*89);showScreen('gameScreen');renderQuestion()}
+function currentQuestion(){let r=0;while(qIndex>=5*(r+1))r++;return {round:r,question:rounds[r].questions[qIndex%5]}}
+function renderQuestion(){clearInterval(timer);answered=false;const {round,question}=currentQuestion();seconds=20;players.forEach(p=>p.answered=false);$('roundTitle').textContent=rounds[round].name;$('categoryTag').textContent=rounds[round].tag;$('questionImage').textContent=question.emoji;$('questionText').textContent=question.q;$('questionCount').textContent=`${qIndex+1} / 20`;$('progressBar').style.width=`${qIndex/20*100}%`;$('timerNum').textContent=seconds;$('feedback').classList.add('hidden');$('nextBtn').classList.add('hidden');$('answers').innerHTML=question.a.map((a,i)=>`<button class="answer" data-answer="${i}"><b>${String.fromCharCode(65+i)}.</b> ${a}</button>`).join('');$('answers').querySelectorAll('button').forEach(b=>b.onclick=()=>submitAnswer(+b.dataset.answer));renderLeaderboard();timer=setInterval(()=>{seconds--;$('timerNum').textContent=seconds;if(seconds<=5)playTone(440,.05);if(seconds<=0)revealAnswers(null)},1000);scheduleBots()}
+function submitAnswer(choice){if(answered)return;answered=true;clearInterval(timer);const elapsed=20-seconds;const base=choice===currentQuestion().question.correct?1000:0;const bonus=base?Math.round(500*(seconds/20)):0;players[0].score+=base+bonus;players[0].answered=true;revealAnswers(choice,base+bonus);}
+function scheduleBots(){players.filter(p=>!p.isHuman).forEach((p,i)=>{const delay=2500+i*1900+Math.random()*1800;setTimeout(()=>{if(!document.getElementById('gameScreen')||$('gameScreen').classList.contains('hidden')||answered)return;const {question}=currentQuestion();const correct=Math.random()<(0.78-i*.035);const choice=correct?question.correct:(question.correct+1+Math.floor(Math.random()*3))%4;const elapsed=Math.max(2,Math.floor(delay/1000));const remaining=Math.max(0,20-elapsed);const points=choice===question.correct?1000+Math.round(500*(remaining/20)):0;p.score+=points;p.answered=true;renderLeaderboard();},delay)})}
+function revealAnswers(choice,points=0){if(!answered){answered=true;clearInterval(timer)}const {question}=currentQuestion();$('answers').querySelectorAll('button').forEach((b,i)=>{b.disabled=true;if(i===question.correct)b.classList.add('correct');else if(i===choice)b.classList.add('wrong')});const correct=choice===question.correct;$('feedback').classList.remove('hidden');$('feedback').innerHTML=choice===null?`<b>Time's up!</b> The correct answer is <b>${question.a[question.correct]}</b>.<br>${question.why}`:`<b>${correct?'Correct! 🎉':'Not quite!'}</b> ${correct?`You earned ${points.toLocaleString()} points.`:`The correct answer is ${question.a[question.correct]}.`}<br>${question.why}`;$('nextBtn').classList.remove('hidden');$('nextBtn').textContent=qIndex===19?'See final results →':'Next question →';$('nextBtn').onclick=nextQuestion;playTone(correct?820:300);renderLeaderboard();}
+function renderLeaderboard(){const sorted=[...players].sort((a,b)=>b.score-a.score);$('leaderboard').innerHTML=sorted.map((p,i)=>`<div class="player-row ${p.isHuman?'me':''}"><span style="width:17px;color:var(--muted);font-size:11px">${i+1}</span><span class="avatar">${p.avatar}</span><span class="player-name">${escapeHtml(p.name)}</span><span class="player-score">${p.score.toLocaleString()}</span></div>`).join('')}
+function nextQuestion(){qIndex++;if(qIndex>=20){finishGame();return}renderQuestion()}
+function finishGame(){clearInterval(timer);showScreen('winnerScreen');const sorted=[...players].sort((a,b)=>b.score-a.score);$('winnerText').innerHTML=`<b>${escapeHtml(sorted[0].name)}</b> takes home the Golden Chef Trophy with ${sorted[0].score.toLocaleString()} points!`;$('finalScores').innerHTML=sorted.map((p,i)=>`<div class="player-row"><span style="width:22px">${['🥇','🥈','🥉'][i]||'⭐'}</span><span class="avatar">${p.avatar}</span><span class="player-name">${escapeHtml(p.name)}</span><span class="player-score">${p.score.toLocaleString()}</span></div>`).join('');$('progressBar').style.width='100%';playTone(880,.3)}
+$('leaveBtn').onclick=()=>{clearInterval(timer);showScreen('homeScreen')};$('rematchBtn').onclick=showAvatarModal;$('homeBtn').onclick=()=>showScreen('homeScreen');
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+// Online multiplayer client. Test Mode above remains unchanged.
+const ONLINE_ENDPOINT='/.netlify/functions/game';
+let online={token:null,room:null,host:false,poll:null,last:null};
+async function onlineApi(action,data={}){
+ const res=await fetch(ONLINE_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action,...data,token:online.token,room:data.room||online.room})});
+ const body=await res.json().catch(()=>({error:'The server returned an unreadable response.'}));
+ if(!res.ok)throw new Error(body.error||'Something went wrong.');return body;
+}
+function onlineOpen(){ $('onlinePanel').classList.add('open'); onlineHome(); }
+function onlineClose(){ $('onlinePanel').classList.remove('open'); if(online.poll)clearInterval(online.poll);online.poll=null; }
+function onlineHome(){ $('onlineCard').innerHTML=`<div class="eyebrow">LIVE MULTIPLAYER</div><h2>Enter the competition</h2><p>Create a room and invite others, or enter a room code someone shared with you. Each player joins from their own device.</p><label>Your chef name</label><input id="onlineName" maxlength="18" placeholder="Enter your chef name" value="Chef You"><div class="online-actions"><button class="primary" id="makeRoom">Create room</button><button class="ghost" id="joinRoom">Join with code</button><button class="ghost" id="onlineCancel">Cancel</button></div><p class="online-small">Live play requires the published Netlify version. Test Mode remains available for solo practice.</p>`;
+ $('makeRoom').onclick=async()=>{try{const name=$('onlineName').value.trim()||'Chef';const r=await onlineApi('create',{name});online.token=r.token;online.room=r.room;online.host=true;onlineLobby(r.state)}catch(e){showToast(e.message)}};
+ $('joinRoom').onclick=async()=>{const name=$('onlineName').value.trim()||'Chef';$('onlineCard').innerHTML=`<h2>Join a room</h2><p>Enter the room code from your host.</p><label>Room code</label><input id="joinCode" maxlength="6" placeholder="ABC123" autocapitalize="characters"><div class="online-actions"><button class="primary" id="joinNow">Join room</button><button class="ghost" id="backOnline">Back</button></div>`;$('joinNow').onclick=async()=>{try{const code=$('joinCode').value.trim().toUpperCase();const r=await onlineApi('join',{name,room:code});online.token=r.token;online.room=r.room;online.host=false;onlineLobby(r.state)}catch(e){showToast(e.message)}};$('backOnline').onclick=onlineHome};
+ $('onlineCancel').onclick=onlineClose;
+}
+function onlineLobby(state){online.last=state;renderOnlineLobby(state);if(online.poll)clearInterval(online.poll);online.poll=setInterval(async()=>{try{const r=await onlineApi('state');online.last=r.state;if(r.state.status==='playing')renderOnlineGame(r.state);else if(r.state.status==='finished')renderOnlineWinner(r.state);else renderOnlineLobby(r.state)}catch(e){$('onlineCard').innerHTML=`<h2>Connection paused</h2><p>${escapeHtml(e.message)}</p><button class="primary" onclick="onlineClose()">Close</button>`;clearInterval(online.poll)}},1800)}
+function renderOnlineLobby(s){const me=s.players.find(p=>p.id===s.you);$('onlineCard').innerHTML=`<div class="eyebrow">ROOM LOBBY</div><h2>Waiting for chefs</h2><div class="online-code">${s.code}</div><p>Share this code with everyone joining your game.</p><div class="online-status">${s.players.length} of 8 players joined · ${s.status==='playing'?'Game in progress':'Waiting to start'}</div>${s.players.map((p,i)=>`<div class="online-player"><span>👨‍🍳 ${escapeHtml(p.name)} ${p.id===s.you?'(You)':''}</span><b>${i===0?'HOST':'READY'}</b></div>`).join('')}<div class="online-actions">${online.host?'<button class="primary" id="startOnline" '+(s.players.length<2?'disabled':'')+'>Start game</button>':''}<button class="ghost" id="leaveOnline">Leave room</button></div><p class="online-small">At least two players are needed. The host starts the game when everyone has joined.</p>`;
+ const start=$('startOnline');if(start)start.onclick=async()=>{try{const r=await onlineApi('start');renderOnlineGame(r.state)}catch(e){showToast(e.message)}};$('leaveOnline').onclick=onlineClose;
+}
+function renderOnlineGame(s){online.last=s;if(s.status==='finished'){renderOnlineWinner(s);return;}const q=s.question;$('onlineCard').innerHTML=`<div class="eyebrow">${escapeHtml(q.roundName)} · QUESTION ${s.questionNumber} OF 20</div><div class="online-status">Time remaining: <b>${Math.max(0,Math.ceil((s.deadline-Date.now())/1000))} seconds</b></div><div class="online-question">${escapeHtml(q.prompt)}</div>${q.answers.map((a,i)=>`<button class="online-answer" data-online-answer="${i}" ${s.myAnswer!==null?'disabled':''}>${String.fromCharCode(65+i)}. ${escapeHtml(a)}</button>`).join('')}<div class="online-status">${s.myAnswer!==null?'Your answer is locked in. Waiting for the other chefs…': 'Choose one answer. You only get one attempt.'}</div><h3>Leaderboard</h3>${s.players.slice().sort((a,b)=>b.score-a.score).map(p=>`<div class="online-player"><span>${escapeHtml(p.name)} ${p.id===s.you?'(You)':''}</span><b>${p.score.toLocaleString()}</b></div>`).join('')}<div class="online-actions">${online.host&&s.allAnswered?'<button class="primary" id="advanceOnline">Next question</button>':''}<button class="ghost" id="exitOnlineGame">Exit</button></div>`;
+ document.querySelectorAll('[data-online-answer]').forEach(b=>b.onclick=async()=>{try{const r=await onlineApi('answer',{answer:Number(b.dataset.onlineAnswer)});renderOnlineGame(r.state)}catch(e){showToast(e.message)}});
+ const adv=$('advanceOnline');if(adv)adv.onclick=async()=>{try{const r=await onlineApi('next');if(r.state.status==='finished')renderOnlineWinner(r.state);else renderOnlineGame(r.state)}catch(e){showToast(e.message)}};
+ $('exitOnlineGame').onclick=onlineClose;
+ if(s.status==='finished')renderOnlineWinner(s);
+}
+function renderOnlineWinner(s){if(online.poll)clearInterval(online.poll);$('onlineCard').innerHTML=`<div class="winner"><div class="trophy">🏆</div><h2>Chef Showdown Champion!</h2><p>${escapeHtml(s.winner||'The competition is complete!')}</p>${s.players.slice().sort((a,b)=>b.score-a.score).map((p,i)=>`<div class="online-player"><span>${['🥇','🥈','🥉'][i]||'⭐'} ${escapeHtml(p.name)}</span><b>${p.score.toLocaleString()}</b></div>`).join('')}<button class="primary full" id="closeWinner">Close</button></div>`;$('closeWinner').onclick=onlineClose}
+$('realPlayBtn').onclick=onlineOpen;
+
+</script>
+</body>
+</html>

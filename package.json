@@ -1,0 +1,12 @@
+{
+  "name": "chef-showdown",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo 'Static site ready for Netlify'"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^10.0.0"
+  }
+}
